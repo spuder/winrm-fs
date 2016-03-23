@@ -68,6 +68,18 @@ describe WinRM::FS::FileManager do
       expect(subject).to have_created(dest_file).with_content(this_file)
     end
 
+    it 'should treat extensionless target as file if not an existing directory' do
+      subject.upload(this_file, dest_dir)
+      expect(subject).to have_created(dest_dir).with_content(this_file)
+    end
+
+    it 'should create extensionless source under target dir if target dir exists' do
+      subject.create_dir(dest_dir)
+      src_file = File.expand_path('../../Gemfile', File.dirname(__FILE__))
+      subject.upload(src_file, dest_dir)
+      expect(subject).to have_created(File.join(dest_dir, 'Gemfile')).with_content(src_file)
+    end
+
     it 'should upload to the specified directory with env var' do
       subject.upload(this_file, '$env:Temp')
       expected_dest_file = File.join(subject.temp_dir, File.basename(this_file))
