@@ -63,6 +63,7 @@ describe WinRM::FS::FileManager do
     end
 
     it 'should upload to the specified directory' do
+      subject.create_dir(dest_dir)
       subject.upload(this_file, dest_dir)
       expect(subject).to have_created(dest_file).with_content(this_file)
     end
@@ -74,6 +75,7 @@ describe WinRM::FS::FileManager do
     end
 
     it 'should upload to Program Files sub dir' do
+      subject.create_dir('$env:ProgramFiles/foo')
       subject.upload(this_file, '$env:ProgramFiles/foo')
       expect(subject).to have_created('c:/Program Files/foo/file_manager_spec.rb') \
         .with_content(this_file)
@@ -81,6 +83,7 @@ describe WinRM::FS::FileManager do
 
     it 'should upload to the specified nested directory' do
       dest_sub_dir = File.join(dest_dir, 'subdir')
+      subject.create_dir(dest_sub_dir)
       dest_sub_dir_file = File.join(dest_sub_dir, File.basename(this_file))
       subject.upload(this_file, dest_sub_dir)
       expect(subject).to have_created(dest_sub_dir_file).with_content(this_file)
